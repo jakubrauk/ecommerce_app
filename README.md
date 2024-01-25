@@ -1,3 +1,17 @@
+# Procedura uruchomienia docker-compose
+```bash
+docker compose up -d --build
+```
+Powinna stworzuć się baza danych i migracje powinny się automatycznie uruchomić.
+
+do utworzenia superusera:
+```bash
+docker ps  # znajdź kontener ecommerce_project-web
+docker exec -it kontener_id /bin/bash
+python manage.py createsuperuser
+```
+
+
 # Procedura uruchomienia
 
 Python w wersji 3.8.10
