@@ -1,5 +1,10 @@
 # Procedura uruchomienia
 
+instalacja wymaganych zależności
+```bash
+pip install -r requirements.txt
+```
+
 Pierwsze utworzenie bazy danych, migracje, stworzenie grup Customer oraz Salesman i przypisanie im uprawnień
 ```bash
 python manage.py migrate
