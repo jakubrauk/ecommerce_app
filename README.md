@@ -1,8 +1,16 @@
 # Procedura uruchomienia
 
+Python w wersji 3.8.10
+Serwer redis 5.0.7
+
 instalacja wymaganych zależności
 ```bash
 pip install -r requirements.txt
+```
+
+Wygenerowanie SECRET_KEY, do umieszczenia w zmiennych środowiskowych lub do ustawienia na sztywno w ecommerce_project.settings.SECRET_KEY
+```bash
+python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
 ```
 
 Pierwsze utworzenie bazy danych, migracje, stworzenie grup Customer oraz Salesman i przypisanie im uprawnień
@@ -25,6 +33,7 @@ Uruchomienie celery
 python -m celery -A ecommerce_project worker -l info -B
 ```
 
+### Spełnione obowiązkowe funkcjonalności oraz przypomnienie o terminie płatności
 
 ## Zadanie
 Napisz niewielką aplikację wykorzystując co najmniej Django 4, Django REST Framework oraz bazę
