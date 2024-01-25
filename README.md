@@ -1,4 +1,4 @@
-# Procedura uruchomienia docker-compose
+# Procedura uruchomienia docker compose (na branchu docker)
 ```bash
 docker compose up -d --build
 ```
