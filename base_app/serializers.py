@@ -26,6 +26,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'name', 'description', 'price', 'category', 'picture', 'thumbnail']
 
     def create(self, validated_data):
+        # create picture thumbnail on create
         product = Product.objects.create(**validated_data)
         product.create_thumbnail()
         return product
@@ -40,6 +41,7 @@ class ProductStatisticsSerializer(serializers.ModelSerializer):
         fields = ['product', 'sum_ordered']
 
     def get_product(self, obj):
+        # convert pk to Product instance and serialize it
         instance = Product.objects.get(id=obj['product'])
         return ProductSerializer(instance=instance, context={'request': self._context['request']}).data
 
@@ -77,6 +79,11 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Order
         fields = ['url', 'customer', 'payment_date', 'order_date', 'total_price', 'address', 'items']
+
+    def validate(self, attrs):
+        if attrs.get('customer') != self._context['request'].user:
+            raise serializers.ValidationError({"customer": "Forbidden to create order for different user!"})
+        return attrs
 
     def create(self, validated_data):
         items = validated_data.pop('items')
