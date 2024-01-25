@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./ecommerce_project
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./ecommerce_project/media/:/media/
+      - ./ecommerce_project/data/:/data/
+    ports:
+      - 8000:8000
+    environment:
+      - SECRET_KEY=django-insecure-_cr5mu9ii_zc10l_bywviy$-u6ucy=ny01j*^(jbmx0cw0obl* 
+    depends_on:
+      - redis
+  redis:
+    image: redis:alpine
+  celery:
+    build: ./ecommerce_project
+    command: celery -A ecommerce_project worker -l info
+    volumes:
+      - ./ecommerce_project/media/:/media/
+      - ./ecommerce_project/data/:/data/
+    environment:
+      - SECRET_KEY=django-insecure-_cr5mu9ii_zc10l_bywviy$-u6ucy=ny01j*^(jbmx0cw0obl* 
+    depends_on:
+      - redis
+  celery-beat:
+    build: ./ecommerce_project
+    command: celery -A ecommerce_project beat -l info
+    volumes:
+      - ./ecommerce_project/media/:/media/
+      - ./ecommerce_project/data/:/data/
+    environment:
+      - SECRET_KEY=django-insecure-_cr5mu9ii_zc10l_bywviy$-u6ucy=ny01j*^(jbmx0cw0obl* 
+    depends_on:
+      - redis

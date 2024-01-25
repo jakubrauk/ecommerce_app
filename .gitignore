@@ -3,15 +3,15 @@ __pycache__
 db.sqlite3
 dump.rdb
 celerybeat-schedule
-media/*
-!media/.gitkeep
-!media/pictures
-media/pictures/*
-!media/pictures/.gitkeep
+ecommerce_project/media/*
+!ecommerce_project/media/.gitkeep
+!ecommerce_project/pictures
+ecommerce_project/media/pictures/*
+!ecommerce_project/media/pictures/.gitkeep
 
-!media/thumbnails
-media/thumbnails/*
-!media/thumbnails/.gitkeep
+!ecommerce_project/media/thumbnails
+ecommerce_project/media/thumbnails/*
+!ecommerce_project/thumbnails/.gitkeep
 
 venv
 
