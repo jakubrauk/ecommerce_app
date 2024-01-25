@@ -1,3 +1,26 @@
+# Procedura uruchomienia
+
+Pierwsze utworzenie bazy danych, migracje, stworzenie grup Customer oraz Salesman i przypisanie im uprawnień
+```bash
+python manage.py migrate
+```
+
+Uruchomienie serwera django
+```bash
+python manage.py runserver
+```
+
+Uruchomienie redis
+```bash
+redis-server
+```
+
+Uruchomienie celery
+```bash
+python -m celery -A ecommerce_project worker
+```
+
+
 ## Zadanie
 Napisz niewielką aplikację wykorzystując co najmniej Django 4, Django REST Framework oraz bazę
 SQLite. Powinna ona udostępniać RESTowe API pokrywające funkcjonalności opisane poniżej. Do
