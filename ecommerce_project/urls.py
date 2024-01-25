@@ -26,7 +26,7 @@ router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'products', views.ProductViewSet)
-# router.register(r'products_statistics', views.ProductsStatistics)
+router.register(r'products_statistics', views.ProductsStatistics, basename='productsstatistics')
 router.register(r'categories', views.ProductCategoryViewSet)
 router.register(r'orders', views.OrderViewSet)
 router.register(r'orderaddresses', views.OrderAddressViewSet, basename='orderaddress')
@@ -35,7 +35,7 @@ router.register(r'orderitems', views.OrderItemViewSet, basename='orderitem')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('product_statistics/', views.ProductsStatistics.as_view({'get': 'list'}), name='product-statistics'),
+    # path('product_statistics/', views.ProductsStatistics.as_view({'get': 'list'}), name='product-statistics'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

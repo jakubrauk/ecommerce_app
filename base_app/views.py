@@ -1,4 +1,5 @@
 from datetime import datetime
+from itertools import count
 
 import django_filters.rest_framework
 from django.contrib.auth.models import User, Group
@@ -7,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from base_app.models import Product, ProductCategory, Order, OrderAddress, OrderItem
+from base_app.permissions import IsAdminOrSalesmanPermission
 from base_app.serializers import UserSerializer, GroupSerializer, ProductSerializer, ProductCategorySerializer, \
     OrderSerializer, OrderAddressSerializer, OrderItemSerializer, ProductStatisticsSerializer
 
@@ -36,29 +38,60 @@ class ProductViewSet(viewsets.ModelViewSet):
 class ProductsStatistics(ReadOnlyModelViewSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.required_params = ('from_date', 'to_date', 'count')
         self.from_date = None
         self.to_date = None
         self.count = None
+        self.parameters_errors = {}
 
     queryset = OrderItem.objects.all()
     serializer_class = ProductStatisticsSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminOrSalesmanPermission]
 
     def get_queryset(self):
-        from_date = datetime.strptime(self.from_date, '%Y-%m-%d').date()
-        to_date = datetime.strptime(self.to_date, '%Y-%m-%d').date()
-        count = int(self.count)
-        return OrderItem.get_product_statistics(from_date, to_date, count)
+        return OrderItem.get_product_statistics(self.from_date, self.to_date, self.count)
 
     def list(self, request, *args, **kwargs):
-        self.from_date = request.query_params.get('from_date', None)
-        self.to_date = request.query_params.get('to_date', None)
-        self.count = request.query_params.get('count', None)
-        if not all([self.from_date, self.to_date, self.count]):
-            # TODO validate parameters
-            # TODO clean parameters
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # acquire required parameters
+        for param in self.required_params:
+            setattr(self, param, request.query_params.get(param, None))
+
+        if not self.validate_parameters():
+            # return bad request when parameters are not valid
+            return Response({'detail': self.parameters_errors}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         return super().list(request, *args, **kwargs)
+
+    def validate_parameters(self):
+        # validate and clean parameters
+        valid = True
+        if self.from_date:
+            try:
+                self.from_date = datetime.strptime(self.from_date, '%Y-%m-%d').date()
+            except ValueError as exc:
+                valid = False
+                self.parameters_errors['from_date'] = str(exc)
+        else:
+            valid = False
+            self.parameters_errors['from_date'] = 'Missing parameter'
+        if self.to_date:
+            try:
+                self.to_date = datetime.strptime(self.to_date, '%Y-%m-%d').date()
+            except ValueError as exc:
+                valid = False
+                self.parameters_errors['from_date'] = str(exc)
+        else:
+            valid = False
+            self.parameters_errors['to_date'] = 'Missing parameter'
+        if self.count:
+            if self.count.isdigit():
+                self.count = int(self.count)
+            else:
+                valid = False
+                self.parameters_errors['count'] = 'Not a digit.'
+        else:
+            valid = False
+            self.parameters_errors['count'] = 'Missing parameter'
+        return valid
 
 
 class ProductCategoryViewSet(viewsets.ModelViewSet):
