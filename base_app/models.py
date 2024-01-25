@@ -4,7 +4,6 @@ from io import BytesIO
 from django.db import models
 from PIL import Image
 from django.db.models import Sum
-from django.dispatch import receiver
 
 
 class ProductCategory(models.Model):
@@ -26,6 +25,9 @@ class Product(models.Model):
         return f'Product ({self.id}) {self.name}'
 
     def create_thumbnail(self):
+        """
+        Creates thumbnail from saved picture. Thumbnail size is max 200x200
+        """
         image = Image.open(self.picture.file.file)
         image.thumbnail(size=(200, 200))
         image_file = BytesIO()
@@ -57,6 +59,15 @@ class OrderItem(models.Model):
 
     @classmethod
     def get_product_statistics(cls, from_date, to_date, count):
+        """
+        Returns queryset [{'product': product_id, 'sum_ordered': amount_attr_sum_from_orders}]
+        with most frequently ordered products within range [from_date, to_date] of order and
+        with specified amount of returned products.
+        :param from_date: datetime.date or string Date (YYYY-MM-DD) Lower bound of the order
+        :param to_date: datetime.date or string Date (YYYY-MM-DD) Upper bound of the order
+        :param count: Products count to be returned
+        :return: queryset [{'product': product_id: int, 'sum_ordered': int}]
+        """
         return cls.objects.filter(
             order__order_date__gte=from_date,
             order__order_date__lte=to_date,
