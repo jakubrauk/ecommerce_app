@@ -22,7 +22,7 @@ redis-server
 
 Uruchomienie celery
 ```bash
-python -m celery -A ecommerce_project worker
+python -m celery -A ecommerce_project worker -l info -B
 ```
 
 

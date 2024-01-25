@@ -2,6 +2,7 @@
 __pycache__
 db.sqlite3
 dump.rdb
+celerybeat-schedule
 media/*
 !media/.gitkeep
 !media/pictures
