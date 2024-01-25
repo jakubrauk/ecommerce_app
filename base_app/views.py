@@ -4,8 +4,9 @@ from itertools import count
 import django_filters.rest_framework
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, filters, permissions, status
+from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, GenericViewSet
 
 from base_app.models import Product, ProductCategory, Order, OrderAddress, OrderItem
 from base_app.permissions import IsAdminOrSalesmanPermission
@@ -105,14 +106,29 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+    def get_queryset(self):
+        if self.request.user.groups.filter(name='Customer'):
+            return Order.objects.filter(customer=self.request.user).order_by('-order_date')
+        return super().get_queryset()
 
-class OrderAddressViewSet(viewsets.ModelViewSet):
+
+class OrderAddressViewSet(ReadOnlyModelViewSet):
     queryset = OrderAddress.objects.all().order_by('city')
     serializer_class = OrderAddressSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+    def get_queryset(self):
+        if self.request.user.groups.filter(name='Customer'):
+            return OrderAddress.objects.filter(order__customer=self.request.user)
+        return super().get_queryset()
 
-class OrderItemViewSet(viewsets.ModelViewSet):
+
+class OrderItemViewSet(ReadOnlyModelViewSet):
     queryset = OrderItem.objects.all().order_by('-order__order_date')
     serializer_class = OrderItemSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+
+    def get_queryset(self):
+        if self.request.user.groups.filter(name='Customer'):
+            return OrderItem.objects.filter(order__customer=self.request.user).order_by('-order__order_date')
+        return super().get_queryset()
