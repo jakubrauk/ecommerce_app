@@ -101,4 +101,5 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         )
         for item in items:
             OrderItem.objects.create(order=order, **item)
+            order.send_confirmation_email()
         return order

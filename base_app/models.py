@@ -5,6 +5,8 @@ from django.db import models
 from PIL import Image
 from django.db.models import Sum
 
+from base_app.tasks import send_order_confirmation_email_task
+
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=254)
@@ -50,6 +52,9 @@ class Order(models.Model):
     order_date = models.DateField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=9, decimal_places=2)
     address = models.ForeignKey('OrderAddress', on_delete=models.CASCADE)
+
+    def send_confirmation_email(self):
+        send_order_confirmation_email_task.delay(self.id)
 
 
 class OrderItem(models.Model):
