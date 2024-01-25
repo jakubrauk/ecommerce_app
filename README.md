@@ -2,7 +2,7 @@
 ```bash
 docker compose up -d --build
 ```
-Powinna stworzuć się baza danych i migracje powinny się automatycznie uruchomić.
+Powinna stworzyć się baza danych i migracje powinny się automatycznie uruchomić.
 
 do utworzenia superusera:
 ```bash
