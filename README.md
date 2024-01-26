@@ -1,12 +1,13 @@
 # Procedura uruchomienia docker compose (na branchu docker)
 ```bash
-docker compose up -d --build
+docker compose up --build
 ```
+Serwer powinien się pomyślnie uruchomić razem z redis, celery worker i beat.
 Powinna stworzyć się baza danych i migracje powinny się automatycznie uruchomić.
 
 do utworzenia superusera:
 ```bash
-docker ps  # znajdź kontener ecommerce_project-web
+docker ps  # znajdź kontener ecommerce_app-web
 docker exec -it kontener_id /bin/bash
 python manage.py createsuperuser
 ```
@@ -48,6 +49,8 @@ python -m celery -A ecommerce_project worker -l info -B
 ```
 
 ### Spełnione obowiązkowe funkcjonalności oraz przypomnienie o terminie płatności
+
+Klienci oraz sprzedawcy mogą zostać dodani za pomocą panelu Administratora Django. Należy pamiętać, aby dodać użytkownika do odpowiedniej grupy: Salesman lub Customer
 
 ## Zadanie
 Napisz niewielką aplikację wykorzystując co najmniej Django 4, Django REST Framework oraz bazę
